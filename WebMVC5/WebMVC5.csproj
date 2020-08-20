@@ -135,6 +135,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModel\ActorViewModel.cs" />
+    <Compile Include="ViewModel\MovieDetailViewModel.cs" />
     <Compile Include="ViewModel\MovieViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿@model WebMVC5.ViewModel.MovieViewModel
+﻿@model WebMVC5.ViewModel.MovieDetailViewModel
 
 @{
     ViewBag.Title = "Detail";
@@ -43,6 +43,11 @@
         </dd>
 
     </dl>
+    <p>Actors</p>
+    @foreach(var item in Model.ActorList)
+    {
+        <span>@Html.Raw(item.Name) / @Html.Raw(item.Intro)</span><br />
+    }
 </div>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |

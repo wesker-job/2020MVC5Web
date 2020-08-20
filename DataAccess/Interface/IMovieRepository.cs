@@ -8,10 +8,16 @@ namespace DataAccess
 
         Movies GetById(int id);
 
-        bool EditSave(Movies movie);
+        void Update(Movies movie);
 
-        bool CreateSave(Movies movie);
+        void Delete(Movies movie);
 
-        bool DeleteSave(Movies movie);
+        void Add(Movies movie);
+
+        //bool EditSave(Movies movie);
+
+        //bool CreateSave(Movies movie);
+
+        //bool DeleteSave(Movies movie);
     }
 }

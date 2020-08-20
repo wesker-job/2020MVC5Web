@@ -1,22 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Data.SqlClient;
-using System.Security.Cryptography.Xml;
-using System.Data.Entity.Core.Common.CommandTrees;
 using System;
 using System.Data.Entity;
-using System.Data.Entity.Migrations.Builders;
 
 namespace DataAccess
 {
     public class MovieRepository : IMovieRepository
     {
         //private readonly TPCoreWebEntities _context;
+        private readonly DbContext _context;
+        private DbSet<Movies> _dbSet;
 
-        public MovieRepository()
+        public MovieRepository(DbContext dbContext)
         {
-            //TPCoreWebEntities tpCoreWebEntities = new TPCoreWebEntities();
-            //_context = tpCoreWebEntities;
+            _context = dbContext;
+            _dbSet = _context.Set<Movies>();
         }
 
         public List<Movies> GetAll()
@@ -24,7 +22,7 @@ namespace DataAccess
             List<Movies> movies = new List<Movies>();
 
             //using (TPMVCWeb db = new TPMVCWeb())
-            using (CodeFirstEF db = new CodeFirstEF())
+            using (TPMVCWeb db = new TPMVCWeb())
             {
                 //db.Database.Log = (log) => System.Diagnostics.Debug.WriteLine(log);
 
@@ -40,7 +38,7 @@ namespace DataAccess
         {
             Movies movie = new Movies();
 
-            using (CodeFirstEF db = new CodeFirstEF())
+            using (TPMVCWeb db = new TPMVCWeb())
             {
                 movie = db.Movies.Find(id);
                 //movie = db.Movies.Where(c => c.Id == id).FirstOrDefault();
@@ -49,13 +47,27 @@ namespace DataAccess
             return movie ?? new Movies();
         }
 
+        public void Delete(Movies movie)
+        {
+            
+            var findMovie = _dbSet.Find(movie.Id);
+            if (findMovie != null)
+            {
+                if (_context.Entry(findMovie).State == EntityState.Deleted)
+                {
+                    _dbSet.Attach(findMovie);
+                }
+                _dbSet.Remove(findMovie);
+            }
+        }
+
         public bool DeleteSave(Movies movie)
         {
             bool result = false;
 
             try
             {
-                using (CodeFirstEF db = new CodeFirstEF())
+                using (TPMVCWeb db = new TPMVCWeb())
                 {
                     var findMovie = db.Movies.Find(movie.Id);
                     if (findMovie != null)
@@ -81,7 +93,7 @@ namespace DataAccess
 
             try
             {
-                using (CodeFirstEF db = new CodeFirstEF())
+                using (TPMVCWeb db = new TPMVCWeb())
                 {
                     var findMovie = db.Movies.Find(movie.Id);
                     if (findMovie == null)
@@ -99,11 +111,27 @@ namespace DataAccess
             return result;
         }
 
+        public void Add(Movies movie)
+        {
+            using TPMVCWeb db = new TPMVCWeb();
+            var findMovie = db.Movies.Find(movie.Id);
+            if (findMovie == null)
+            {
+                db.Movies.Add(movie);
+            }
+        }
+
+        public void Update(Movies movie)
+        {
+            Movies findMovie = _dbSet.Find(movie.Id);
+            _context.Entry(findMovie).CurrentValues.SetValues(movie);
+        }
+
         public bool EditSave(Movies movie)
         {
             bool result = false;
 
-            using (CodeFirstEF db = new CodeFirstEF())
+            using (TPMVCWeb db = new TPMVCWeb())
             {
                 //exec sp
                 //db.MovieActors.SqlQuery("EXECUTE [dbo].[GetAllProducts]");

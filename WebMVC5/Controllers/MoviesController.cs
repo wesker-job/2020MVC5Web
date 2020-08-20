@@ -100,11 +100,34 @@ namespace WebMVC5.Controllers
         public ActionResult Details(int id)
         {
             MoviesService service = new MoviesService();
-            MovieDto query = service.GetById(id);
-            MovieViewModel vm = new MovieViewModel();
-            vm = this.MovieVMTrans(query);
+            MovieDetailDto query = service.GetByIdDetail(id);
+            MovieDetailViewModel vm = new MovieDetailViewModel();
+            vm = this.MovieDetailTrans(query);
 
             return View(vm);
+        }
+
+        private MovieDetailViewModel MovieDetailTrans(MovieDetailDto dto)
+        {
+            MovieDetailViewModel vm = new MovieDetailViewModel();
+            vm.Id = dto.Id;
+            vm.Title = dto.Title;
+            vm.ReleaseDate = dto.ReleaseDate;
+            vm.Genre = dto.Genre;
+            vm.Price = dto.Price;
+            
+            vm.ActorList = new List<ActorViewModel>();
+            foreach(var item in dto.ActorList)
+            {
+                vm.ActorList.Add(new ActorViewModel()
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Intro = item.Intro
+                });
+            }
+
+            return vm;
         }
 
         private List<MovieViewModel> MovieListVMTrans(List<MovieDto> movies)

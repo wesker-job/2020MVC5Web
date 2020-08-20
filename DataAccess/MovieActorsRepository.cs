@@ -11,8 +11,10 @@ namespace DataAccess
     {
         public MovieActorsRepository() { }
 
-        public string GetActorsByMovieId(int movieid)
+        public List<Actors> GetActorsByMovieId(int movieid)
         {
+            List<Actors> actorList = new List<Actors>();
+
             List<string> runTime = new List<string>();
             using (CodeFirstEF db = new CodeFirstEF())
             {
@@ -43,14 +45,23 @@ namespace DataAccess
 
                 sw.Reset();//碼表歸零
                 sw.Start();//碼表開始計時
-                var actorList = db.Actors.Join(db.MovieActors, a => a.Id, ma => ma.ActorId,
+                var getActorList = db.Actors.Join(db.MovieActors, a => a.Id, ma => ma.ActorId,
                     (a, ma) => new { NewMovieId = ma.MovieId, NewID = a.Id, NewName = a.Name, NewIntro = a.Intro })
                     .Where( c => c.NewMovieId == movieid).ToList();
                 runTime.Add($"第三種:{sw.Elapsed.TotalMilliseconds}");
 
+                foreach(var item in getActorList)
+                {
+                    actorList.Add(new Actors()
+                    {
+                        Id = item.NewID,
+                        Name = item.NewName,
+                        Intro = item.NewIntro
+                    });
+                }
             }
 
-            return string.Empty;
+            return actorList;
         }
     }
 }
