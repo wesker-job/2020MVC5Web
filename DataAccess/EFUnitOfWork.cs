@@ -11,10 +11,9 @@ namespace DataAccess
 {
     public class EFUnitOfWork : IUnitOfWork
     {
-        private readonly DbContext _context;
+        //private readonly DbContext _context;
         private bool _disposed;
         private Hashtable _repositories;
-
 
         /// <summary>
         /// 設定此Unit of work(UOF)的Context。
@@ -22,7 +21,25 @@ namespace DataAccess
         /// <param name="context">設定UOF的context</param>
         public EFUnitOfWork(DbContext context)
         {
-            _context = context;
+            //_context = context;
+            this.Context = context;
+            //MovieRepository = new MovieRepository(context);
+        }
+
+        public DbContext Context { get; private set; }
+
+        // TODO
+        public IMovieRepository MovieRepository
+        {
+            get 
+            {
+                _repositories ??= new Hashtable();
+                if (!_repositories.ContainsKey("Movies"))
+                {
+                    _repositories.Add("Movies", new MovieRepository(this.Context));
+                }
+                return (IMovieRepository)_repositories["Movies"];
+            }
         }
 
         /// <summary>
@@ -30,7 +47,7 @@ namespace DataAccess
         /// </summary>
         public void Save()
         {
-            _context.SaveChanges();
+            Context.SaveChanges();
         }
 
         /// <summary>
@@ -52,25 +69,10 @@ namespace DataAccess
             {
                 if (disposing)
                 {
-                    _context.Dispose();
+                    //_context.Dispose();
+                    this.Context.Dispose();
                 }
             }
-        }
-
-        public IMovieRepository movieRepository()
-        {
-            if (_repositories == null)
-            {
-                _repositories = new Hashtable();
-            }
-
-            if (!_repositories.ContainsKey("movies"))
-            {
-                IMovieRepository repo = new MovieRepository(_context);
-                _repositories.Add("movies", repo);
-            }
-                
-            return (IMovieRepository)_repositories["movies"];
         }
 
         /// <summary>
@@ -95,7 +97,7 @@ namespace DataAccess
 
                 var repositoryInstance =
                     Activator.CreateInstance(repositoryType
-                            .MakeGenericType(typeof(T)), _context);
+                            .MakeGenericType(typeof(T)), this.Context);//_context);
 
                 _repositories.Add(type, repositoryInstance);
             }

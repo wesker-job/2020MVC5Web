@@ -2,8 +2,6 @@
 using DataAccess;
 using DataAccess.DataManager;
 using System.Collections.Generic;
-using System.Data.Entity.Core.Common.CommandTrees;
-using System.Linq;
 
 namespace BusinessLogic
 {
@@ -15,7 +13,7 @@ namespace BusinessLogic
 
             //IMovieRepository imovieRepository = new MovieRepository();
             //List<Movies> movieList = imovieRepository.GetAll();
-            MovieManager manager = new MovieManager();
+            MovieDAL manager = new MovieDAL();
             var movieList = manager.GetAll();
 
             foreach (Movies movies in movieList)
@@ -33,7 +31,7 @@ namespace BusinessLogic
             //IMovieRepository imovieRepository = new MovieRepository();
             //var movie = imovieRepository.GetById(id);
             //var movie = moviesRepo.Read(x => x.Id == id);
-            MovieManager manager = new MovieManager();
+            MovieDAL manager = new MovieDAL();
             var movie = manager.GetById(id);
             dto = this.MovieDTOTrans(movie);
 
@@ -46,13 +44,13 @@ namespace BusinessLogic
 
             //IMovieRepository imovieRepository = new MovieRepository();
             //var movie = imovieRepository.GetById(id);
-            MovieManager manager = new MovieManager();
+            MovieDAL manager = new MovieDAL();
             var movie = manager.GetById(id);
             //dto = this.MovieDTOTrans(movie);
 
             MovieActorsRepository maRepo = new MovieActorsRepository();
             var getActors = maRepo.GetActorsByMovieId(id);
-            dto = this.movieDetailDtoTrans(movie, getActors);
+            dto = this.MovieDetailDtoTrans(movie, getActors);
 
             return dto;
         }
@@ -65,7 +63,7 @@ namespace BusinessLogic
             //IMovieRepository imovieRepository = new MovieRepository();
             //saveResult = imovieRepository.EditSave(this.MovieTrans(dto));
             Movies movies = this.MovieTrans(dto);
-            MovieManager manager = new MovieManager();
+            MovieDAL manager = new MovieDAL();
             saveResult = manager.Update(movies);
 
             return saveResult;
@@ -73,39 +71,38 @@ namespace BusinessLogic
 
         public bool DeleteSave(MovieDto dto)
         {
-            bool saveResult = false;
-
             //IMovieRepository imovieRepository = new MovieRepository();
             //saveResult = imovieRepository.DeleteSave(this.MovieTrans(dto));
             Movies movies = this.MovieTrans(dto);
-            MovieManager manager = new MovieManager();
-            saveResult = manager.Delete(movies);
+            MovieDAL manager = new MovieDAL();
+            bool saveResult = manager.Delete(movies);
 
             return saveResult;
         }
 
         public bool CreateSave(MovieDto dto)
         {
-            bool saveResult = false;
-
             //IMovieRepository imovieRepository = new MovieRepository();
             //saveResult = imovieRepository.CreateSave(this.MovieTrans(dto));
             Movies movies = this.MovieTrans(dto);
-            MovieManager manager = new MovieManager();
-            saveResult = manager.Add(movies);
+            MovieDAL manager = new MovieDAL();
+            bool saveResult = manager.Add(movies);
 
             return saveResult;
         }
-        private MovieDetailDto movieDetailDtoTrans(Movies movies, List<Actors> actors)
+        private MovieDetailDto MovieDetailDtoTrans(Movies movies, List<Actors> actors)
         {
-            MovieDetailDto dto = new MovieDetailDto();
-            dto.Id = movies.Id;
-            dto.Title = movies.Title;
-            dto.ReleaseDate = movies.ReleaseDate;
-            dto.Genre = movies.Genre;
-            dto.Price = movies.Price ?? 0;
+            MovieDetailDto dto = new MovieDetailDto
+            {
+                Id = movies.Id,
+                Title = movies.Title,
+                ReleaseDate = movies.ReleaseDate,
+                Genre = movies.Genre,
+                Price = movies.Price ?? 0,
 
-            dto.ActorList = new List<ActorDto>();
+                ActorList = new List<ActorDto>()
+            };
+
             foreach (var item in actors)
             {
                 dto.ActorList.Add(new ActorDto()

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.DataManager
 {
-    public class ActorManager
+    public class ActorDAL
     {
 
     }

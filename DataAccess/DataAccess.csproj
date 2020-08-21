@@ -59,8 +59,8 @@
       <DependentUpon>mvcDbContext.tt</DependentUpon>
     </Compile>
     <Compile Include="CodeFirstEF.cs" />
-    <Compile Include="DataManager\ActorManager.cs" />
-    <Compile Include="DataManager\MovieManager.cs" />
+    <Compile Include="DataManager\ActorDAL.cs" />
+    <Compile Include="DataManager\MovieDAL.cs" />
     <Compile Include="EFGenericRepository.cs" />
     <Compile Include="EFUnitOfWork.cs" />
     <Compile Include="Employees.cs">

@@ -1,33 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess.DataManager
 {
-    public class MovieManager
+    public class MovieDAL
     {
         private IUnitOfWork _Uok = null;
 
-        public MovieManager()
+        public MovieDAL()
         { }
 
-        public MovieManager(IUnitOfWork unitOfWork)
+        public MovieDAL(IUnitOfWork unitOfWork)
         {
             _Uok = unitOfWork;
         }
 
         public List<Movies> GetAll()
         {
-            var result = _Uok.movieRepository.GetAll();
+            List<Movies> result = UokInstance.MovieRepository.GetAll();
 
             return result;
         }
 
         public Movies GetById(int id)
         {
-            var result = _Uok.movieRepository.GetById(id);
+            Movies result = UokInstance.MovieRepository.GetById(id);
 
             return result;
         }
@@ -37,12 +34,12 @@ namespace DataAccess.DataManager
             bool result = false;
             try
             {
-                _Uok.movieRepository.Update(movies);
-                _Uok.Save();
+                UokInstance.MovieRepository.Update(movies);
+                UokInstance.Save();
 
                 result = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -55,12 +52,12 @@ namespace DataAccess.DataManager
             bool result = false;
             try
             {
-                _Uok.movieRepository.Delete(movies);
-                _Uok.Save();
+                UokInstance.MovieRepository.Delete(movies);
+                UokInstance.Save();
 
                 result = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -73,12 +70,12 @@ namespace DataAccess.DataManager
             bool result = false;
             try
             {
-                _Uok.movieRepository.Add(movie);
+                UokInstance.MovieRepository.Add(movie);
                 UokInstance.Save();
 
                 result = true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -90,7 +87,7 @@ namespace DataAccess.DataManager
         {
             get
             {
-                _Uok = _Uok ?? new EFUnitOfWork(new TPMVCWeb());
+                _Uok ??= new EFUnitOfWork(new TPMVCWeb());
                 return _Uok;
             }
         }
